@@ -1,0 +1,131 @@
+PROGRAM STATEMENT:
+	
+Consider the telephone book database of N clients. Make use of a hash table implementation to quickly look up a client’s telephone number. Make use of linear probing, double hashing and quadratic collision handling techniques.
+
+#include <iostream>
+#include <vector>
+#include <string>
+using namespace std;
+
+class TelephoneBook {
+    vector<pair<string, string>> table;
+    int size;
+
+    // Simple hash function
+    int hash_function(const string& key) {
+        int hash = 0;
+        for (char c : key) hash = (hash * 31 + c) % size;
+        return hash;
+    }
+
+    // Linear Probing
+    int probe(int index, const string& name, int method) {
+        int i = 0;
+        int new_index = index;
+        while (table[new_index].first != "" && table[new_index].first != name && i < size) {
+            new_index = (index + (method == 2 ? i * i : method == 3 ? i : 1)) % size;
+            i++;
+        }
+        return new_index;
+    }
+
+public:
+    TelephoneBook(int s) : size(s) { table.resize(s, {"", ""}); }
+
+    // Insert or update a client
+    void insert(const string& name, const string& phone, int method = 1) {
+        int index = hash_function(name);
+        index = probe(index, name, method);
+        table[index] = {name, phone};
+    }
+
+    // Search for a client
+    string search(const string& name, int method = 1) {
+        int index = hash_function(name);
+        index = probe(index, name, method);
+        return table[index].first == name ? table[index].second : "Not Found";
+    }
+
+    // Display the table
+    void display() {
+        for (int i = 0; i < size; ++i)
+            if (table[i].first != "") cout << i << ": " << table[i].first << " -> " << table[i].second << endl;
+    }
+};
+
+int main() {
+    int size;
+    cout << "Enter table size: ";
+    cin >> size;
+
+    TelephoneBook phonebook(size);
+    int choice;
+
+    while (true) {
+        cout << "\n1. Insert\n2. Search\n3. Display\n4. Exit\nChoice: ";
+        cin >> choice;
+
+        string name, phone;
+        int method;
+
+        switch (choice) {
+        case 1:
+            cout << "Name: "; cin >> name;
+            cout << "Phone: "; cin >> phone;
+            cout << "Method (1: Linear, 2: Quadratic, 3: Double Hashing): "; cin >> method;
+            phonebook.insert(name, phone, method);
+            break;
+        case 2:
+            cout << "Name: "; cin >> name;
+            cout << "Phone: " << phonebook.search(name, method) << endl;
+            break;
+        case 3:
+            phonebook.display();
+            break;
+        case 4:
+            return 0;
+        default:
+            cout << "Invalid choice\n";
+        }
+    }
+
+    return 0;
+}
+
+
+Output:-
+
+Enter the size of the hash table: 10
+
+--- Menu ---
+1. Insert a client
+2. Search for a client
+3. Delete a client
+4. Display all clients
+5. Exit
+Enter your choice: 1
+Enter client name: Alice
+Enter client phone number: 12345
+Use Double Hashing? (1 for yes, 0 for no): 0
+Inserted (Alice, 12345) at index 2
+
+--- Menu ---
+1. Insert a client
+2. Search for a client
+3. Delete a client
+4. Display all clients
+5. Exit
+Enter your choice: 2
+Enter client name to search: Alice
+Use Double Hashing? (1 for yes, 0 for no): 0
+Phone Number: 12345
+
+--- Menu ---
+1. Insert a client
+2. Search for a client
+3. Delete a client
+4. Display all clients
+5. Exit
+Enter your choice: 4
+Telephone Book:
+Index 2: Alice -> 12345

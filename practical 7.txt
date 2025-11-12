@@ -1,0 +1,137 @@
+PROGRAM STATEMENT:
+
+Pizza parlor accepting maximum M orders. Orders are served on a first come first served basis. Queues are frequently used in computer programming, and a typical example is the creation of a job queue by an operating system. If the operating system does not use priorities, then the jobs are processed in the order they enter the system. Write a program for simulating job queue. Write functions to add jobs and delete jobs from the queue.
+
+#include <iostream>
+using namespace std;
+
+class PizzaParlor {
+private:
+    int* queue;          // Array to store the queue
+    int front, rear;     // Indices to track the front and rear of the queue
+    int maxSize;         // Maximum size of the queue
+    int currentSize;     // Current number of elements in the queue
+
+public:
+    // Constructor to initialize the queue
+    PizzaParlor(int M) {
+        maxSize = M;
+        queue = new int[maxSize];
+        front = rear = -1;
+        currentSize = 0;
+    }
+
+    // Destructor to free memory
+    ~PizzaParlor() {
+        delete[] queue;
+    }
+
+    // Function to check if the queue is full
+    bool isFull() {
+        return currentSize == maxSize;
+    }
+
+    // Function to check if the queue is empty
+    bool isEmpty() {
+        return currentSize == 0;
+    }
+
+    // Function to add a job (order) to the queue
+    void addJob(int jobId) {
+        if (isFull()) {
+            cout << "Queue is full! Cannot add more jobs.\n";
+        } else {
+            if (front == -1) {  // If the queue is empty
+                front = 0;
+            }
+            rear = (rear + 1) % maxSize;  // Circular increment
+            queue[rear] = jobId;
+            currentSize++;
+            cout << "Job " << jobId << " added to the queue.\n";
+        }
+    }
+
+    // Function to delete a job (process an order) from the queue
+    void deleteJob() {
+        if (isEmpty()) {
+            cout << "Queue is empty! No jobs to process.\n";
+        } else {
+            int jobId = queue[front];
+            cout << "Job " << jobId << " is being processed.\n";
+            front = (front + 1) % maxSize;  // Circular increment
+            currentSize--;
+        }
+    }
+
+    // Function to display the current jobs in the queue
+    void displayQueue() {
+        if (isEmpty()) {
+            cout << "Queue is empty.\n";
+        } else {
+            cout << "Current jobs in the queue: ";
+            int i = front;
+            for (int count = 0; count < currentSize; count++) {
+                cout << queue[i] << " ";
+                i = (i + 1) % maxSize;  // Circular increment
+            }
+            cout << endl;
+        }
+    }
+};
+
+int main() {
+    int M;
+    cout << "Enter the maximum number of orders the pizza parlor can handle: ";
+    cin >> M;
+
+    PizzaParlor parlor(M);
+
+    int choice, jobId;
+
+    while (true) {
+        cout << "\nPizza Parlor Job Queue System\n";
+        cout << "1. Add a job (order)\n";
+        cout << "2. Process a job (delete)\n";
+        cout << "3. Display current jobs in the queue\n";
+        cout << "4. Exit\n";
+        cout << "Enter your choice: ";
+        cin >> choice;
+
+        switch (choice) {
+        case 1:
+            cout << "Enter job ID to add: ";
+            cin >> jobId;
+            parlor.addJob(jobId);
+            break;
+        case 2:
+            parlor.deleteJob();
+            break;
+        case 3:
+            parlor.displayQueue();
+            break;
+        case 4:
+            cout << "Exiting the system.\n";
+            return 0;
+        default:
+            cout << "Invalid choice. Please try again.\n";
+        }
+    }
+
+    return 0;
+}
+
+
+Output:-
+
+Enter the maximum number of orders the pizza parlor can handle: 1
+
+Pizza Parlor Job Queue System
+1. Add a job (order)
+2. Process a job (delete)
+3. Display current jobs in the queue
+4. Exit
+Enter your choice: 1
+Enter job ID to add: 101
+Job 101 added to the queue.
+
+

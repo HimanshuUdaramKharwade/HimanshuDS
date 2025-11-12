@@ -1,0 +1,218 @@
+PROGRAM STATEMENT:
+
+Write menu based program-
+a) Write a program to store roll numbers of student in array who attended a training program in random order. Write a function for searching whether a particular student attended a training program or not, using Linear search.
+
+#include <iostream>
+#include <vector>
+using namespace std;
+
+// Function to perform linear search
+bool linear_search(const vector<int>& roll_numbers, int search_roll) {
+    for (int roll : roll_numbers) {
+        if (roll == search_roll) {
+            return true;
+        }
+    }
+    return false;
+}
+
+int main() {
+    vector<int> roll_numbers;
+    int choice;
+
+    while (true) {
+        // Menu options
+        cout << "\n--- Menu ---\n";
+        cout << "1. Enter roll numbers of students\n";
+        cout << "2. Search for a student by roll number\n";
+        cout << "3. Exit\n";
+        cout << "Enter your choice: ";
+        cin >> choice;
+
+        if (choice == 1) {
+            // Input roll numbers in random order
+            int n;
+            cout << "Enter the number of students: ";
+            cin >> n;
+            roll_numbers.clear(); // Clear previous roll numbers
+
+            cout << "Enter the roll numbers of students who attended the training:\n";
+            for (int i = 0; i < n; i++) {
+                int roll;
+                cout << "Enter roll number of student " << i + 1 << ": ";
+                cin >> roll;
+                roll_numbers.push_back(roll);
+            }
+            cout << "Roll numbers stored: ";
+            for (int roll : roll_numbers) {
+                cout << roll << " ";
+            }
+            cout << endl;
+
+        } else if (choice == 2) {
+            // Search for a roll number using linear search
+            int search_roll;
+            cout << "Enter the roll number to search: ";
+            cin >> search_roll;
+
+            if (linear_search(roll_numbers, search_roll)) {
+                cout << "Student with roll number " << search_roll << " attended the training program.\n";
+            } else {
+                cout << "Student with roll number " << search_roll << " did not attend the training program.\n";
+            }
+
+        } else if (choice == 3) {
+            cout << "Exiting the program.\n";
+            break;
+        } else {
+            cout << "Invalid choice. Please try again.\n";
+        }
+    }
+
+    return 0;
+}
+
+Output :-
+
+--- Menu ---
+1. Enter roll numbers of students
+2. Search for a student by roll number
+3. Exit
+Enter your choice: 1
+Enter the number of students: 5
+Enter the roll numbers of students who attended the training:
+Enter roll number of student 1: 101
+Enter roll number of student 2: 102
+Enter roll number of student 3: 103
+Enter roll number of student 4: 104
+Enter roll number of student 5: 105
+Roll numbers stored: 101 102 103 104 105
+
+--- Menu ---
+1. Enter roll numbers of students
+2. Search for a student by roll number
+3. Exit
+Enter your choice: 2
+Enter the roll number to search: 103
+Student with roll number 103 attended the training program.
+
+
+
+b) Write a program to store roll numbers of student array who attended training
+programs in sorted order. Write a function for searching whether a particular student attended a training program or not, using Binary search.
+
+#include <iostream>
+#include <vector>
+#include <algorithm> // For sorting
+using namespace std;
+
+// Function to perform binary search
+bool binary_search(const vector<int>& roll_numbers, int search_roll) {
+    int left = 0, right = roll_numbers.size() - 1;
+
+    while (left <= right) {
+        int mid = left + (right - left) / 2;
+
+        // If the roll number is found at mid
+        if (roll_numbers[mid] == search_roll) {
+            return true;
+        }
+
+        // If the roll number is greater than the mid element
+        if (roll_numbers[mid] < search_roll) {
+            left = mid + 1;
+        }
+        // If the roll number is smaller than the mid element
+        else {
+            right = mid - 1;
+        }
+    }
+
+    return false;
+}
+
+int main() {
+    vector<int> roll_numbers;
+    int choice;
+
+    while (true) {
+        // Menu options
+        cout << "\n--- Menu ---\n";
+        cout << "1. Enter roll numbers of students\n";
+        cout << "2. Search for a student by roll number\n";
+        cout << "3. Exit\n";
+        cout << "Enter your choice: ";
+        cin >> choice;
+
+        if (choice == 1) {
+            // Input roll numbers and store in sorted order
+            int n;
+            cout << "Enter the number of students: ";
+            cin >> n;
+            roll_numbers.clear(); // Clear previous roll numbers
+
+            cout << "Enter the roll numbers of students who attended the training:\n";
+            for (int i = 0; i < n; i++) {
+                int roll;
+                cout << "Enter roll number of student " << i + 1 << ": ";
+                cin >> roll;
+                roll_numbers.push_back(roll);
+            }
+
+            // Sort the roll numbers in ascending order
+            sort(roll_numbers.begin(), roll_numbers.end());
+
+            cout << "Roll numbers stored in sorted order: ";
+            for (int roll : roll_numbers) {
+                cout << roll << " ";
+            }
+            cout << endl;
+
+        } else if (choice == 2) {
+            // Search for a roll number using binary search
+            int search_roll;
+            cout << "Enter the roll number to search: ";
+            cin >> search_roll;
+
+            if (binary_search(roll_numbers, search_roll)) {
+                cout << "Student with roll number " << search_roll << " attended the training program.\n";
+            } else {
+                cout << "Student with roll number " << search_roll << " did not attend the training program.\n";
+            }
+
+        } else if (choice == 3) {
+            cout << "Exiting the program.\n";
+            break;
+        } else {
+            cout << "Invalid choice. Please try again.\n";
+        }
+    }
+
+    return 0;
+}
+
+Output:-
+
+----- Menu ---
+1. Enter roll numbers of students
+2. Search for a student by roll number
+3. Exit
+Enter your choice: 1
+Enter the number of students: 5
+Enter the roll numbers of students who attended the training:
+Enter roll number of student 1: 101
+Enter roll number of student 2: 104
+Enter roll number of student 3: 103
+Enter roll number of student 4: 105
+Enter roll number of student 5: 102
+Roll numbers stored in sorted order: 101 102 103 104 105
+
+--- Menu ---
+1. Enter roll numbers of students
+2. Search for a student by roll number
+3. Exit
+Enter your choice: 2
+Enter the roll number to search: 103
+Student with roll number 103 attended the training program.
+

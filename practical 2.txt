@@ -1,0 +1,142 @@
+PROGRAME STATEMENT
+
+Write a program to store the first-year percentage of students in an array. Write function for sorting array of floating-point numbers in ascending order using - Selection Sort - Bubble sort and display top five scores.
+
+#include <stdio.h>
+
+#define MAX 100
+
+// Function to input percentages
+void inputPercentages(float arr[], int n) {
+    for (int i = 0; i < n; i++) {
+        printf("Enter percentage of student %d: ", i + 1);
+        scanf("%f", &arr[i]);
+    }
+}
+
+// Function to display array
+void displayArray(float arr[], int n) {
+    for (int i = 0; i < n; i++) {
+        printf("%.2f ", arr[i]);
+    }
+    printf("\n");
+}
+
+// Selection Sort
+void selectionSort(float arr[], int n) {
+    int i, j, minIndex;
+    float temp;
+    for (i = 0; i < n - 1; i++) {
+        minIndex = i;
+        for (j = i + 1; j < n; j++) {
+            if (arr[j] < arr[minIndex])
+                minIndex = j;
+        }
+        // Swap
+        temp = arr[i];
+        arr[i] = arr[minIndex];
+        arr[minIndex] = temp;
+    }
+}
+
+// Bubble Sort
+void bubbleSort(float arr[], int n) {
+    int i, j;
+    float temp;
+    for (i = 0; i < n - 1; i++) {
+        for (j = 0; j < n - i - 1; j++) {
+            if (arr[j] > arr[j + 1]) {
+                // Swap
+                temp = arr[j];
+                arr[j] = arr[j + 1];
+                arr[j + 1] = temp;
+            }
+        }
+    }
+}
+
+// Display Top 5 Scores
+void displayTopFive(float arr[], int n) {
+    int count = n < 5 ? n : 5;
+    printf("Top %d Scores:\n", count);
+    for (int i = n - 1; i >= n - count; i--) {
+        printf("%.2f ", arr[i]);
+    }
+    printf("\n");
+}
+
+int main() {
+    float percentages[MAX], sorted[MAX];
+    int n, choice;
+
+    printf("Enter the number of students: ");
+    scanf("%d", &n);
+
+    inputPercentages(percentages, n);
+
+    while (1) {
+        printf("\n==== MENU ====\n");
+        printf("1. Sort using Selection Sort\n");
+        printf("2. Sort using Bubble Sort\n");
+        printf("3. Display Top 5 Scores\n");
+        printf("4. Exit\n");
+        printf("Enter your choice: ");
+        scanf("%d", &choice);
+
+        switch (choice) {
+        case 1:
+            for (int i = 0; i < n; i++) sorted[i] = percentages[i];
+            selectionSort(sorted, n);
+            printf("Sorted Percentages (Selection Sort):\n");
+            displayArray(sorted, n);
+            break;
+
+        case 2:
+            for (int i = 0; i < n; i++) sorted[i] = percentages[i];
+            bubbleSort(sorted, n);
+            printf("Sorted Percentages (Bubble Sort):\n");
+            displayArray(sorted, n);
+            break;
+
+        case 3:
+            for (int i = 0; i < n; i++) sorted[i] = percentages[i];
+            selectionSort(sorted, n);
+            displayTopFive(sorted, n);
+            break;
+
+        case 4:
+            printf("Exiting program. Goodbye!\n");
+            return 0;
+
+        default:
+            printf("Invalid choice. Please try again.\n");
+        }
+    }
+
+    return 0;
+}
+
+
+OUTPUT :-
+
+Enter the number of students: 6
+Enter percentage of student 1: 85.5
+Enter percentage of student 2: 91.2
+Enter percentage of student 3: 76.3
+Enter percentage of student 4: 88.0
+Enter percentage of student 5: 94.5
+Enter percentage of student 6: 82.1
+
+==== MENU ====
+1. Sort using Selection Sort
+2. Sort using Bubble Sort
+3. Display Top 5 Scores
+4. Exit
+Enter your choice: 1
+Sorted Percentages (Selection Sort):
+76.30 82.10 85.50 88.00 91.20 94.50
+
+==== MENU ====
+Enter your choice: 3
+Top 5 Scores:
+94.50 91.20 88.00 85.50 82.10

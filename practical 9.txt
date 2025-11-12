@@ -1,0 +1,111 @@
+PROGRAM STATEMENT:
+
+There are flight paths between cities. If there is a flight between city A and city B then there is an edge between the cities. The cost of the edge can be the time that flight takes to reach city B from A or the amount of fuel used for the journey. Represent this as a graph. The node can be represented by the airport name or name of the city. Use adjacency list representation of the graph or use adjacency matrix representation of the graph. Check whether the graph is connected or not.
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+
+#define MAX 100
+
+int graph[MAX][MAX];
+bool visited[MAX];
+int numCities;
+
+void DFS(int v) {
+    visited[v] = true;
+    for (int i = 0; i < numCities; i++) {
+        if (graph[v][i] != 0 && !visited[i]) {
+            DFS(i);
+        }
+    }
+}
+
+int main() {
+    int numFlights;
+    char cities[MAX][50];
+
+    printf("Enter number of cities: ");
+    scanf("%d", &numCities);
+
+    // Input city names
+    printf("Enter city names:\n");
+    for (int i = 0; i < numCities; i++) {
+        scanf("%s", cities[i]);
+    }
+
+    // Initialize graph
+    for (int i = 0; i < numCities; i++)
+        for (int j = 0; j < numCities; j++)
+            graph[i][j] = 0;
+
+    printf("Enter number of flights (edges): ");
+    scanf("%d", &numFlights);
+
+    printf("Enter flights in format: SourceIndex DestinationIndex Cost\n");
+    for (int i = 0; i < numFlights; i++) {
+        int src, dest, cost;
+        scanf("%d %d %d", &src, &dest, &cost);
+        graph[src][dest] = cost;
+        graph[dest][src] = cost; // For undirected graph
+    }
+
+    // Print adjacency matrix
+    printf("\nAdjacency Matrix:\n");
+    for (int i = 0; i < numCities; i++) {
+        for (int j = 0; j < numCities; j++) {
+            printf("%3d ", graph[i][j]);
+        }
+        printf("\n");
+    }
+
+    // Initialize visited array
+    for (int i = 0; i < numCities; i++) {
+        visited[i] = false;
+    }
+
+    // Perform DFS from first city
+    DFS(0);
+
+    // Check if all cities were visited
+    bool isConnected = true;
+    for (int i = 0; i < numCities; i++) {
+        if (!visited[i]) {
+            isConnected = false;
+            break;
+        }
+    }
+
+    if (isConnected) {
+        printf("\nThe graph is CONNECTED (All cities are reachable).\n");
+    } else {
+        printf("\nThe graph is NOT CONNECTED (Some cities are unreachable).\n");
+    }
+
+    return 0;
+}
+
+
+Input/Output:-
+
+Input:
+Enter number of cities: 4
+Enter city names:
+A
+B
+C
+D
+Enter number of flights: 3
+Enter flights in format: SourceIndex DestinationIndex Cost
+0 1 5
+1 2 10
+2 3 8
+
+Output:
+Adjacency Matrix:
+  0   5   0   0
+  5   0  10   0
+  0  10   0   8
+  0   0   8   0
+
+The graph is CONNECTED (All cities are reachable).

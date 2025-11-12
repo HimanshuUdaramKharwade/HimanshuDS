@@ -1,0 +1,176 @@
+PROGRAM STATEMENT:
+
+Second year Computer Engineering class, set A of students like Vanilla Ice-cream and set B of students like butterscotch ice-cream. Write a program to store two sets using a linked list. compute and display-
+a) Set of students who like both vanilla and butterscotch
+b) Set of students who like either vanilla or butterscotch or not both Number of students who like neither vanilla nor butterscotch
+
+#include <iostream>
+#include <set>
+using namespace std;
+
+// Node structure for Linked List
+struct Node {
+    int studentID;
+    Node* next;
+    Node(int id) : studentID(id), next(nullptr) {}
+};
+
+// Linked List class to handle the set operations
+class LinkedList {
+public:
+    Node* head;
+
+    LinkedList() : head(nullptr) {}
+
+    // Insert a student ID into the linked list
+    void insert(int studentID) {
+        Node* newNode = new Node(studentID);
+        newNode->next = head;
+        head = newNode;
+    }
+
+    // Display the linked list
+    void display() {
+        Node* temp = head;
+        while (temp != nullptr) {
+            cout << temp->studentID << " ";
+            temp = temp->next;
+        }
+        cout << endl;
+    }
+
+    // Check if a student ID exists in the linked list
+    bool exists(int studentID) {
+        Node* temp = head;
+        while (temp != nullptr) {
+            if (temp->studentID == studentID) return true;
+            temp = temp->next;
+        }
+        return false;
+    }
+
+    // Function to find the intersection with another linked list
+    LinkedList intersection(LinkedList& other) {
+        LinkedList result;
+        Node* temp = head;
+        while (temp != nullptr) {
+            if (other.exists(temp->studentID)) {
+                result.insert(temp->studentID);
+            }
+            temp = temp->next;
+        }
+        return result;
+    }
+
+    // Function to find the symmetric difference with another linked list
+    LinkedList symmetricDifference(LinkedList& other) {
+        LinkedList result;
+        Node* temp = head;
+
+        // Add all elements from current list that are not in the other list
+        while (temp != nullptr) {
+            if (!other.exists(temp->studentID)) {
+                result.insert(temp->studentID);
+            }
+            temp = temp->next;
+        }
+
+        // Add all elements from the other list that are not in the current list
+        temp = other.head;
+        while (temp != nullptr) {
+            if (!exists(temp->studentID)) {
+                result.insert(temp->studentID);
+            }
+            temp = temp->next;
+        }
+
+        return result;
+    }
+
+    // Function to count the number of students in the set
+    int count() {
+        int count = 0;
+        Node* temp = head;
+        while (temp != nullptr) {
+            count++;
+            temp = temp->next;
+        }
+        return count;
+    }
+
+    // Function to find the union of two linked lists
+    LinkedList unionSet(LinkedList& other) {
+        LinkedList result = *this;
+
+        Node* temp = other.head;
+        while (temp != nullptr) {
+            if (!exists(temp->studentID)) {
+                result.insert(temp->studentID);
+            }
+            temp = temp->next;
+        }
+
+        return result;
+    }
+};
+
+int main() {
+    LinkedList vanillaSet, butterscotchSet;
+    int n, studentID;
+
+    // Input the set of students who like Vanilla Ice-cream (Set A)
+    cout << "Enter number of students who like Vanilla Ice-cream: ";
+    cin >> n;
+    cout << "Enter the student IDs: ";
+    for (int i = 0; i < n; ++i) {
+        cin >> studentID;
+        vanillaSet.insert(studentID);
+    }
+
+    // Input the set of students who like Butterscotch Ice-cream (Set B)
+    cout << "Enter number of students who like Butterscotch Ice-cream: ";
+    cin >> n;
+    cout << "Enter the student IDs: ";
+    for (int i = 0; i < n; ++i) {
+        cin >> studentID;
+        butterscotchSet.insert(studentID);
+    }
+
+    // Find and display the intersection of the two sets (students who like both Vanilla and Butterscotch)
+    LinkedList bothLikes = vanillaSet.intersection(butterscotchSet);
+    cout << "Students who like both Vanilla and Butterscotch: ";
+    bothLikes.display();
+
+    // Find and display the symmetric difference (students who like either Vanilla or Butterscotch but not both)
+    LinkedList eitherNotBoth = vanillaSet.symmetricDifference(butterscotchSet);
+    cout << "Students who like either Vanilla or Butterscotch but not both: ";
+    eitherNotBoth.display();
+
+    // Compute the union of both sets and find students who like neither Vanilla nor Butterscotch
+    LinkedList allStudents = vanillaSet.unionSet(butterscotchSet);
+    cout << "Total number of students who like Vanilla or Butterscotch: " << allStudents.count() << endl;
+
+    // If the total number of students in the class is known, say 'totalClassSize'
+    int totalClassSize;
+    cout << "Enter the total number of students in the class: ";
+    cin >> totalClassSize;
+
+    int neitherLike = totalClassSize - allStudents.count();
+    cout << "Number of students who like neither Vanilla nor Butterscotch: " << neitherLike << endl;
+
+    return 0;
+}
+
+
+Output:-
+
+Enter number of students who like Vanilla Ice-cream: 5
+Enter the student IDs: 101 102 103 104 105
+Enter number of students who like Butterscotch Ice-cream: 4
+Enter the student IDs: 102 105 106 107
+
+Students who like both Vanilla and Butterscotch: 102 105 
+Students who like either Vanilla or Butterscotch but not both: 101 103 104 106 107 
+Enter the total number of students in the class: 10
+Total number of students who like Vanilla or Butterscotch: 7
+Number of students who like neither Vanilla nor Butterscotch: 3

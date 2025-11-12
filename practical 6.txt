@@ -1,0 +1,62 @@
+PROGRAM STATEMENT :
+
+In any language program mostly syntax error occurs due to unbalancing delimiter such as (), {}, []. Write a program using stack to check whether a given expression is well parenthesized or not.
+
+#include <iostream>
+#include <stack>
+#include <string>
+using namespace std;
+
+// Function to check if the expression is well parenthesized
+bool isWellParenthesized(const string& expr) {
+    stack<char> s;  // Stack to store opening delimiters
+
+    // Iterate through each character in the expression
+    for (char ch : expr) {
+        // Push opening delimiters onto the stack
+        if (ch == '(' || ch == '{' || ch == '[') {
+            s.push(ch);
+        }
+        // If it's a closing delimiter
+        else if (ch == ')' || ch == '}' || ch == ']') {
+            // If the stack is empty or top of the stack doesn't match the closing delimiter
+            if (s.empty()) {
+                return false;  // No matching opening delimiter
+            }
+            char top = s.top();
+            s.pop();
+            // Check if the popped delimiter matches the corresponding opening delimiter
+            if ((ch == ')' && top != '(') || 
+                (ch == '}' && top != '{') || 
+                (ch == ']' && top != '[')) {
+                return false;
+            }
+        }
+    }
+
+    // If the stack is empty after processing all characters, the expression is balanced
+    return s.empty();
+}
+
+int main() {
+    string expr;
+
+    // Input expression from the user
+    cout << "Enter an expression: ";
+    cin >> expr;
+
+    // Check if the expression is well parenthesized
+    if (isWellParenthesized(expr)) {
+        cout << "The expression is well parenthesized." << endl;
+    } else {
+        cout << "The expression is not well parenthesized." << endl;
+    }
+
+    return 0;
+}
+
+
+Output:-
+
+Enter an expression: {[(2 + 3) * 5]}
+The expression is well parenthesized.
