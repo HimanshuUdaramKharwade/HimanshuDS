@@ -8,48 +8,76 @@ Consider the telephone book database of N clients. Make use of a hash table impl
 using namespace std;
 
 class TelephoneBook {
-    vector<pair<string, string>> table;
+    vector<pair<string,string>> table;
     int size;
 
-    // Simple hash function
+    // Primary hash: polynomial rolling mod table size
     int hash_function(const string& key) {
-        int hash = 0;
-        for (char c : key) hash = (hash * 31 + c) % size;
-        return hash;
+        long long h = 0;
+        for (char c : key) h = (h * 31 + (unsigned char)c) % size;
+        return (int)h;
     }
 
-    // Linear Probing
-    int probe(int index, const string& name, int method) {
-        int i = 0;
-        int new_index = index;
-        while (table[new_index].first != "" && table[new_index].first != name && i < size) {
-            new_index = (index + (method == 2 ? i * i : method == 3 ? i : 1)) % size;
-            i++;
-        }
-        return new_index;
+    // Second hash for double hashing (must be non-zero and < size)
+    int second_hash(const string& key) {
+        int prime = (size > 3) ? size - 2 : 2; // a small prime < size (simple choice)
+        int h = 0;
+        for (char c : key) h = (h * 17 + (unsigned char)c) % prime;
+        int val = h % prime;
+        return (val == 0) ? 1 : val;
     }
 
 public:
     TelephoneBook(int s) : size(s) { table.resize(s, {"", ""}); }
 
-    // Insert or update a client
+    // Insert or update using chosen method:
+    // method = 1 -> linear, 2 -> quadratic, 3 -> double hashing
     void insert(const string& name, const string& phone, int method = 1) {
-        int index = hash_function(name);
-        index = probe(index, name, method);
-        table[index] = {name, phone};
+        int h = hash_function(name);
+        int h2 = second_hash(name);
+        for (int i = 0; i < size; ++i) {
+            int idx;
+            if (method == 1) { // linear
+                idx = (h + i) % size;
+            } else if (method == 2) { // quadratic
+                idx = (h + i + i * i) % size;
+            } else { // double hashing
+                idx = (h + i * h2) % size;
+            }
+
+            // empty slot or same name -> place/update
+            if (table[idx].first == "" || table[idx].first == name) {
+                table[idx] = {name, phone};
+                return;
+            }
+        }
+        cout << "Insert failed: table full\n";
     }
 
-    // Search for a client
+    // Search using same probing method as insertion
     string search(const string& name, int method = 1) {
-        int index = hash_function(name);
-        index = probe(index, name, method);
-        return table[index].first == name ? table[index].second : "Not Found";
+        int h = hash_function(name);
+        int h2 = second_hash(name);
+        for (int i = 0; i < size; ++i) {
+            int idx;
+            if (method == 1) idx = (h + i) % size;
+            else if (method == 2) idx = (h + i + i * i) % size;
+            else idx = (h + i * h2) % size;
+
+            if (table[idx].first == "") return "Not Found";      // empty -> not present
+            if (table[idx].first == name) return table[idx].second;
+        }
+        return "Not Found";
     }
 
-    // Display the table
     void display() {
-        for (int i = 0; i < size; ++i)
-            if (table[i].first != "") cout << i << ": " << table[i].first << " -> " << table[i].second << endl;
+        cout << "\nIndex : Name -> Phone\n";
+        for (int i = 0; i < size; ++i) {
+            if (table[i].first != "")
+                cout << i << " : " << table[i].first << " -> " << table[i].second << "\n";
+            else
+                cout << i << " : Empty\n";
+        }
     }
 };
 
@@ -57,40 +85,34 @@ int main() {
     int size;
     cout << "Enter table size: ";
     cin >> size;
-
     TelephoneBook phonebook(size);
-    int choice;
 
     while (true) {
-        cout << "\n1. Insert\n2. Search\n3. Display\n4. Exit\nChoice: ";
-        cin >> choice;
-
-        string name, phone;
-        int method;
-
-        switch (choice) {
-        case 1:
-            cout << "Name: "; cin >> name;
-            cout << "Phone: "; cin >> phone;
-            cout << "Method (1: Linear, 2: Quadratic, 3: Double Hashing): "; cin >> method;
+        cout << "\n1.Insert  2.Search  3.Display  4.Exit\nChoice: ";
+        int choice; cin >> choice;
+        if (choice == 1) {
+            string name, phone;
+            int method;
+            cout << "Name: "; cin >> ws; getline(cin, name);
+            cout << "Phone: "; getline(cin, phone);
+            cout << "Method (1:Linear, 2:Quadratic, 3:Double): "; cin >> method;
             phonebook.insert(name, phone, method);
-            break;
-        case 2:
-            cout << "Name: "; cin >> name;
-            cout << "Phone: " << phonebook.search(name, method) << endl;
-            break;
-        case 3:
+        } else if (choice == 2) {
+            string name; int method;
+            cout << "Name to search: "; cin >> ws; getline(cin, name);
+            cout << "Method used at insertion (1:Linear,2:Quadratic,3:Double): "; cin >> method;
+            cout << "Phone: " << phonebook.search(name, method) << "\n";
+        } else if (choice == 3) {
             phonebook.display();
+        } else if (choice == 4) {
             break;
-        case 4:
-            return 0;
-        default:
+        } else {
             cout << "Invalid choice\n";
         }
     }
-
     return 0;
 }
+
 
 
 Output:-
@@ -129,3 +151,4 @@ Phone Number: 12345
 Enter your choice: 4
 Telephone Book:
 Index 2: Alice -> 12345
+
